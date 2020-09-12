@@ -3,7 +3,7 @@ CREATE DATABASE employeeTracker_db;
 
 USE employeeTracker_db;
 
-CREATE TABLE auctions(
+CREATE TABLE wageSlaves (
   id INT NOT NULL AUTO_INCREMENT,
   employee_name VARCHAR(30) NOT NULL,
   department VARCHAR(30) NOT NULL,
@@ -11,3 +11,6 @@ CREATE TABLE auctions(
   manager_id INT NOT NULL,
   PRIMARY KEY (id)
 );
+
+
+SELECT * FROM wageSlaves;
