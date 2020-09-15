@@ -12,5 +12,19 @@ CREATE TABLE wageSlaves (
   PRIMARY KEY (id)
 );
 
+CREATE TABLE departments(
+  id INT AUTO_INCREMENT,
+  name VARCHAR(30) NOT NULL,
+  PRIMARY KEY (id)
+);
 
+CREATE TABLE roles(
+  id INT AUTO_INCREMENT,
+  title VARCHAR(30) NOT NULL,
+  salary DECIMAL(7, 0) NOT NULL,
+  department_id INT NOT NULL,
+  PRIMARY KEY (id)
+);
 SELECT * FROM wageSlaves;
+SELECT * FROM departments;
+SELECT * FROM roles;

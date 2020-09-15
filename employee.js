@@ -32,7 +32,7 @@ function start() {
       name: "start",
       type: "list",
       message: "Would you like to do?",
-      choices: ["View all employees", "View all employees by Department", "View all employees by Manager", "Add Employee", "Remove Employee", "Exit"]
+      choices: ["View all employees", "View all Departments", "View all Managers", "Add Employee", "Add Department", "Remove Employee", "Exit"]
     })
     .then(function(answer) {
       // based on their answer
@@ -40,16 +40,20 @@ function start() {
         viewAll();
       }
       else if 
-        (answer.start === "View all employees by Department"){
+        (answer.start === "View all Departments"){
           viewDep();
         }
         else if
-        (answer.start === "View all employees by Manager"){
+        (answer.start === "View all Managers"){
           viewMan();
         }
         else if 
         (answer.start === "Add Employee"){
           addEmp();
+        }
+        else if 
+        (answer.start === "Add Department"){
+          addDep();
         }
         else if
         (answer.start === "Remove Employee"){
@@ -75,8 +79,8 @@ function addEmp(){
     },
     {
       name:"department",
-      type: "What department is the employee working in?",
-      message: "",
+      type: "input",
+      message: "What department is the employee working in?",
     },
     {
       name:"salary",
@@ -143,6 +147,39 @@ function removeEmp() {
   )};
 
 
-//view by department
+//view department
+function viewDep() {
+  connection.query(
+    "SELECT * FROM departments",
+  function (error, results, fields) {
+  if (error) throw error;
+  console.table(results)
+  start();
+})
+};
+
+//add department
+function addDep(){
+  inquirer.prompt([
+    {
+      name:"department",
+      type: "input",
+      message: "What is the name of the department that will be added?"
+    }
+  ])
+  .then(function(answer){
+    connection.query(
+      "INSERT INTO departments SET ?",
+      {
+        name: answer.department,
+      },
+      function(err) {
+        if (err) throw err;
+        console.log("Added department sucessfully!");
+        start();
+      }
+    )
+  })
+};
 
 //view by manager
