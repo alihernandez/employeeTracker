@@ -32,11 +32,11 @@ function start() {
       name: "start",
       type: "list",
       message: "Would you like to do?",
-      choices: ["View all employees", "View all Departments", "View all Managers", "Add Employee", "Add Department", "Remove Employee", "Exit"]
+      choices: ["View all employees", "View all Departments", "View all Managers", "Add Employee", "Add Department", "Add Role", "Remove Employee", "Exit"]
     })
     .then(function(answer) {
       // based on their answer
-      if (answer.start === "View all employees") {
+      if (answer.start === "View all Employees") {
         viewAll();
       }
       else if 
@@ -44,8 +44,8 @@ function start() {
           viewDep();
         }
         else if
-        (answer.start === "View all Managers"){
-          viewMan();
+        (answer.start === "View all Roles"){
+          viewRoles();
         }
         else if 
         (answer.start === "Add Employee"){
@@ -54,6 +54,9 @@ function start() {
         else if 
         (answer.start === "Add Department"){
           addDep();
+        }
+        else if(answer.start === "Add Role"){
+          newRole();
         }
         else if
         (answer.start === "Remove Employee"){
@@ -81,6 +84,14 @@ function addEmp(){
       name:"department",
       type: "input",
       message: "What department is the employee working in?",
+    },
+    {
+      name:"role",
+      type: "list",
+      message: "Please select employee role",
+      choices: res.map(role => { 
+        return {name: role.title, value: role.role_id }
+      })
     },
     {
       name:"salary",
@@ -182,4 +193,50 @@ function addDep(){
   })
 };
 
-//view by manager
+//view roles
+function viewRoles() {
+  connection.query(
+    "SELECT * FROM roles",
+  function (error, results, fields) {
+  if (error) throw error;
+  console.table(results)
+  start();
+})
+};
+
+//add new role
+function newRole() {
+  let query1 = "SELECT * FROM roles"
+  connection.query (query1, (err, data) => {
+    if (err) throw err
+    inquierer.prompt([
+      {
+        name:"roleId",
+        type: "input",
+        message: "Enter ID for new role"
+      },
+      {
+        name: "role",
+        type: "input",
+        message: "Enter title of new role"
+      },
+      {
+        name: "salary",
+        type: "input",
+        message: "Please enter salary for new role"
+      },
+      {
+        name: "depId",
+        type: "input",
+        message: "Enter Department ID for new role"
+      }
+    ])
+    .then(function (answers) {
+      let
+    })
+  }
+    
+  )
+}
+
+//update employee role
