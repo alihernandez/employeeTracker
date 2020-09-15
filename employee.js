@@ -1,6 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-var table = require("console.table");
+var table = require("console");
 
 
 // create the connection information for the sql database
@@ -32,7 +32,7 @@ function start() {
       name: "start",
       type: "list",
       message: "Would you like to do?",
-      choices: ["View all employees", "View all employees by Department", "View all employees by Manager", "Add Employee"]
+      choices: ["View all employees", "View all employees by Department", "View all employees by Manager", "Add Employee", "Remove Employee", "Exit"]
     })
     .then(function(answer) {
       // based on their answer
@@ -50,6 +50,14 @@ function start() {
         else if 
         (answer.start === "Add Employee"){
           addEmp();
+        }
+        else if
+        (answer.start === "Remove Employee"){
+          removeEmp();
+        }
+        else if
+        (answer.start === "Exit"){
+          connection.end();
         }
       else{
         connection.end();
@@ -102,10 +110,37 @@ function addEmp(){
 //view all
 function viewAll() {
   connection.query(
-    "SELECT * FROM wageSlaves"
-  )
-  console.table(wageSlaves)
+    "SELECT * FROM wageSlaves",
+  function (error, results, fields) {
+  if (error) throw error;
+  console.table(results)
+  start();
+})
 };
+
+//delete employee
+function removeEmp() {
+  let query1 = "SELECT * FROM wageSlaves"
+  connection.query(query1, (error, res) => {
+      if (error) throw error;
+      inquirer.prompt([{
+        name: "delEmploy",
+        type: "list",
+        message: "Select employee to be removed",
+        choices: res.map(wageSlaves  => {
+          return { name: `${wageSlaves.employee_name}`}
+        })
+      }])
+    .then(answer => {
+      let query2 = "DELETE FROM wageSlaves WHERE ?"
+      connection.query(query2, [{ employee_name: answer.delEmploy}], (err) => {
+        if (err) throw err;
+        console.log("Employee removed")
+        start();
+      })
+    })
+}
+  )};
 
 
 //view by department
