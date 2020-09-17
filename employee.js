@@ -32,7 +32,7 @@ function start() {
       name: "start",
       type: "list",
       message: "Would you like to do?",
-      choices: ["View all employees", "View all Departments", "View all Roles", "Add Employee", "Add Department", "Add Role", "Remove Employee", "Exit"]
+      choices: ["View all Employees", "View all Departments", "View all Roles", "Add Employee", "Add Department", "Add Role", "Remove Employee", "Exit"]
     })
     .then(function(answer) {
       // based on their answer
@@ -71,6 +71,38 @@ function start() {
       }
     });
 }
+//view all employess
+function viewAll() {
+  connection.query(
+    "SELECT * FROM wageSlaves",
+  function (error, results) {
+  if (error) throw error;
+  console.table(results)
+  start();
+})
+};
+
+//view department
+function viewDep() {
+  connection.query(
+    "SELECT * FROM departments",
+  function (error, results) {
+  if (error) throw error;
+  console.table(results)
+  start()
+})
+};
+
+//view roles
+function viewRoles() {
+  connection.query(
+    "SELECT * FROM roles",
+  function (error, results) {
+  if (error) throw error;
+  console.table(results)
+  //start();
+})
+};
 
 //add employee
 function addEmp(){
@@ -103,7 +135,7 @@ function addEmp(){
       type: "list",
       message: "Please select employee role",
       choices: res.map(roles => { 
-        return {name: `${roles.title}`}
+        return {name: `${roles.id}`}
       })
     },
     {
@@ -123,9 +155,8 @@ function addEmp(){
       {
         employee_name: answer.name,
         department: answer.department,
-        role: answer.role,
-        salary: answer.salary,
-        manager_id: answer.manager
+        manager_id: answer.manager,
+        role_id: answer.role
       },
       function(err) {
         if (err) throw err;
@@ -208,28 +239,6 @@ function addDep(){
   })
 };
 
-
-//view department
-function viewDep() {
-  connection.query(
-    "SELECT * FROM departments",
-  function (error, results) {
-  if (error) throw error;
-  console.table(results)
-  start()
-})
-};
-
-//view roles
-function viewRoles() {
-  connection.query(
-    "SELECT * FROM roles",
-  function (error, results) {
-  if (error) throw error;
-  console.table(results)
-  //start();
-})
-};
 //update employee role
 
 //delete employee
