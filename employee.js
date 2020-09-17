@@ -74,6 +74,12 @@ function start() {
 
 //add employee
 function addEmp(){
+  let addQuery = `SELECT wageSlaves.id, wageSlaves.employee_name, wageSlaves.role_id, roles.title, departments.department_name, roles.salary, wageSlaves.manager_id
+    FROM wageSlaves
+    INNER JOIN roles on roles.id = wageSlaves.role_id
+    INNER JOIN departments ON departments.id = roles.department_id`
+    connection.query(addQuery, (err, res) => {
+      if (err) throw err;
   inquirer.prompt([
     {
       name:"name",
@@ -82,15 +88,20 @@ function addEmp(){
     },
     {
       name:"department",
-      type: "input",
+      type: "list",
       message: "What department is the employee working in?",
+      choices: res.map(departments => {
+        return {
+          name:  'Department Name',
+          value: `${departments.department_name}`}
+      })
     },
     {
-      name:"role",
+      name: "role",
       type: "list",
       message: "Please select employee role",
-      choices: res.map(role => { 
-        return {name: role.title, value: role.role_id }
+      choices: res.map(roles => { 
+        return {name: `${roles.title}`}
       })
     },
     {
@@ -110,6 +121,7 @@ function addEmp(){
       {
         employee_name: answer.name,
         department: answer.department,
+        role: answer.role,
         salary: answer.salary,
         manager_id: answer.manager
       },
@@ -120,52 +132,6 @@ function addEmp(){
       }
     )
   })
-};
-
-//view all
-function viewAll() {
-  connection.query(
-    "SELECT * FROM wageSlaves",
-  function (error, results, fields) {
-  if (error) throw error;
-  console.table(results)
-  start();
-})
-};
-
-//delete employee
-function removeEmp() {
-  let query1 = "SELECT * FROM wageSlaves"
-  connection.query(query1, (error, res) => {
-      if (error) throw error;
-      inquirer.prompt([{
-        name: "delEmploy",
-        type: "list",
-        message: "Select employee to be removed",
-        choices: res.map(wageSlaves  => {
-          return { name: `${wageSlaves.employee_name}`}
-        })
-      }])
-    .then(answer => {
-      let query2 = "DELETE FROM wageSlaves WHERE ?"
-      connection.query(query2, [{ employee_name: answer.delEmploy}], (err) => {
-        if (err) throw err;
-        console.log("Employee removed")
-        start();
-      })
-    })
-}
-  )};
-
-
-//view department
-function viewDep() {
-  connection.query(
-    "SELECT * FROM departments",
-  function (error, results, fields) {
-  if (error) throw error;
-  console.table(results)
-  start();
 })
 };
 
@@ -192,6 +158,26 @@ function addDep(){
     )
   })
 };
+//view all
+function viewAll() {
+  connection.query(
+    "SELECT * FROM wageSlaves",
+  function (error, results, fields) {
+  if (error) throw error;
+  console.table(results)
+  start();
+})
+};
+//view department
+function viewDep() {
+  connection.query(
+    "SELECT * FROM departments",
+  function (error, results, fields) {
+  if (error) throw error;
+  console.table(results)
+  start();
+})
+};
 
 //view roles
 function viewRoles() {
@@ -209,7 +195,7 @@ function newRole() {
   let query1 = "SELECT * FROM roles"
   connection.query (query1, (err, data) => {
     if (err) throw err
-    inquierer.prompt([
+    inquirer.prompt([
       {
         name:"roleId",
         type: "input",
@@ -231,12 +217,46 @@ function newRole() {
         message: "Enter Department ID for new role"
       }
     ])
-    .then(function (answers) {
-      let
+    .then(function (answer) {
+      connection.query(
+        "INSERT INTO roles SET ?",
+        { 
+          id: answer.roleId,
+          title: answer.role,
+          salary: answer.salary,
+          department_id: answer.depId
+        },
+        function(err) {
+          if (err) throw err;
+          console.log("Added role sucessfully!");
+          start();
     })
   }
-    
-  )
-}
+  )});
+};
 
 //update employee role
+
+//delete employee
+function removeEmp() {
+  let query1 = "SELECT * FROM wageSlaves"
+  connection.query(query1, (error, res) => {
+      if (error) throw error;
+      inquirer.prompt([{
+        name: "delEmploy",
+        type: "list",
+        message: "Select employee to be removed",
+        choices: res.map(wageSlaves  => {
+          return { name: `${wageSlaves.employee_name}`}
+        })
+      }])
+    .then(answer => {
+      let query2 = "DELETE FROM wageSlaves WHERE ?"
+      connection.query(query2, [{ employee_name: answer.delEmploy}], (err) => {
+        if (err) throw err;
+        console.log("Employee removed")
+        start();
+      })
+    })
+}
+  )};

@@ -7,14 +7,14 @@ CREATE TABLE wageSlaves (
   id INT NOT NULL AUTO_INCREMENT,
   employee_name VARCHAR(30) NOT NULL,
   department VARCHAR(30) NOT NULL,
-  salary INT NOT NULL,
   manager_id INT NOT NULL,
+  role_id INT NOT NULL,
   PRIMARY KEY (id)
 );
 
 CREATE TABLE departments(
   id INT AUTO_INCREMENT,
-  name VARCHAR(30) NOT NULL,
+  department_name VARCHAR(30) NOT NULL,
   PRIMARY KEY (id)
 );
 
