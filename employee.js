@@ -91,6 +91,7 @@ function addEmp(){
       type: "list",
       message: "What department is the employee working in?",
       choices: res.map(departments => {
+        console.log(res)
         return {
           name:  'Department Name',
           value: `${departments.department_name}`}
