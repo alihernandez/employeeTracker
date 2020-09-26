@@ -91,7 +91,7 @@ function viewRoles() {
   connection.query("SELECT * FROM roles", function (error, results) {
     if (error) throw error;
     console.table(results);
-    //start();
+    start();
   });
 }
 // let addQuery = `SELECT wageSlaves.id, wageSlaves.employee_name, wageSlaves.role_id, roles.title, departments.department_name, wageSlaves.manager_id
@@ -268,48 +268,49 @@ function updateEmp() {
     let roleQuery = "SELECT * FROM roles";
 
     connection.query(roleQuery, (error, roleRes) => {
-      inquirer.prompt([
-        {
-          name: "employeeName",
-          type: "list",
-          message: "Please select employee to update:",
-          choices: updateRes.map((wageSlaves) => {
-            return {
-              name: `${
-                wageSlaves.id +
-                " " +
-                wageSlaves.first_name +
-                " " +
-                wageSlaves.last_name
-              }`,
-            };
-          }),
-        },
-        {
-          name: "employeeRole",
-          type: "list",
-          message: "Please select new role:",
-          choices: roleRes.map((roles) => {
-            return {
-              roles: `${roles.id + " " + roles.title}`
-            }
-          })
-        }
-
-      ]).then((answer) => {
-        let updateRole = `UPDATE wageSlaves SET role_id = ${answer.employeeRole.split(" ")[0]}  WHERE id = ${answer.employeeName.split(" ")[0]}`
-        connection.query(updateRole,(error, updateRes) => {
-          console.log("Role updated!")
-          start();
-        })
-      })
-      
-      ;
+      inquirer
+        .prompt([
+          {
+            name: "employeeName",
+            type: "list",
+            message: "Please select employee to update:",
+            choices: updateRes.map((wageSlaves) => {
+              return {
+                name: `${
+                  wageSlaves.id +
+                  " " +
+                  wageSlaves.first_name +
+                  " " +
+                  wageSlaves.last_name
+                }`,
+              };
+            }),
+          },
+          {
+            name: "employeeRole",
+            type: "list",
+            message: "Please select new role:",
+            choices: roleRes.map((roles) => {
+              // console.log(roles)
+              return `${roles.id} ${roles.title}`;
+            }),
+          },
+        ])
+        .then((answer) => {
+          // console.log(answer)
+          let updateRole = `UPDATE wageSlaves SET role_id = ${
+            answer.employeeRole.split(" ")[0]
+          }  WHERE id = ${answer.employeeName.split(" ")[0]}`;
+          connection.query(updateRole, (error, updateRes) => {
+            console.log("Role updated!");
+            start();
+          });
+        });
     });
   });
 }
 
-//delete employee
+delete employee
 function removeEmp() {
   let query1 = "SELECT * FROM wageSlaves";
   connection.query(query1, (error, res) => {
@@ -321,7 +322,7 @@ function removeEmp() {
           type: "list",
           message: "Select employee to be removed",
           choices: res.map((wageSlaves) => {
-            return { name: `${wageSlaves.employee_name}` };
+            return { name: `${wageSlaves.first_name + " " + wageSlaves.last_name}` };
           }),
         },
       ])
@@ -329,7 +330,7 @@ function removeEmp() {
         let query2 = "DELETE FROM wageSlaves WHERE ?";
         connection.query(
           query2,
-          [{ employee_name: answer.delEmploy }],
+          [{ first_name, last_name: answer.delEmploy }],
           (err) => {
             if (err) throw err;
             console.log("Employee removed");
